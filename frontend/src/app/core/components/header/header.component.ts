@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -22,8 +23,22 @@ import { CommonModule } from '@angular/common';
         </nav>
 
         <div class="user-actions">
-          <button class="btn-upload">Upload</button>
-          <button class="btn-login">Login</button>
+          <ng-container *ngIf="authService.currentUser$ | async as user; else loginButtons">
+            <button class="btn-upload" routerLink="/upload">Upload</button>
+            <div class="user-menu">
+              <img [src]="user.avatar || 'assets/default-avatar.png'" alt="Avatar" class="user-avatar">
+              <div class="dropdown-menu">
+                <a routerLink="/profile">Perfil</a>
+                <a routerLink="/settings">Configurações</a>
+                <button (click)="logout()">Sair</button>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-template #loginButtons>
+            <button class="btn-upload" routerLink="/auth/login">Upload</button>
+            <button class="btn-login" routerLink="/auth/login">Login</button>
+          </ng-template>
         </div>
       </div>
     </header>
@@ -108,4 +123,10 @@ import { CommonModule } from '@angular/common';
     }
   `]
 })
-export class HeaderComponent {}
+export class HeaderComponent {
+  constructor(public authService: AuthService) {}
+
+  logout() {
+    this.authService.logout();
+  }
+}

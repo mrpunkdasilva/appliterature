@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -6,8 +7,22 @@ export const routes: Routes = [
     loadComponent: () => import('./core/pages/home/home.component').then(m => m.HomeComponent)
   },
   {
+    path: 'auth',
+    children: [
+      {
+        path: 'login',
+        loadComponent: () => import('./features/auth/pages/login/login.component').then(m => m.LoginComponent)
+      },
+      {
+        path: 'register',
+        loadComponent: () => import('./features/auth/pages/register/register.component').then(m => m.RegisterComponent)
+      }
+    ]
+  },
+  {
     path: 'artist',
-    loadChildren: () => import('./features/artist/artist.routes').then(m => m.artistRoutes)
+    loadChildren: () => import('./features/artist/artist.routes').then(m => m.artistRoutes),
+    canActivate: [authGuard]
   },
   {
     path: 'literature',
