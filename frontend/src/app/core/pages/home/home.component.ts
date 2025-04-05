@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -74,7 +75,12 @@ import { RouterLink } from '@angular/router';
     <section class="join-community">
       <h2>Entre na Matrix</h2>
       <p>Faça parte da revolução artística digital</p>
-      <button class="cta-button">Iniciar Upload</button>
+      <ng-container *ngIf="authService.currentUser$ | async; else notLoggedIn">
+        <button class="cta-button" routerLink="/artist/upload">Iniciar Upload</button>
+      </ng-container>
+      <ng-template #notLoggedIn>
+        <button class="cta-button" routerLink="/auth/login">Iniciar Upload</button>
+      </ng-template>
     </section>
   `,
   styles: [`
@@ -317,6 +323,29 @@ import { RouterLink } from '@angular/router';
         font-size: 1.25rem;
       }
     }
+
+    .cta-button {
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      background: var(--primary-color);
+      color: var(--surface-color);
+      border: none;
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: all 0.3s;
+      box-shadow: var(--neon-shadow);
+
+      &:hover {
+        background: var(--primary-dark);
+        box-shadow: var(--neon-glow);
+        transform: translateY(-2px);
+      }
+    }
   `]
 })
-export class HomeComponent {}
+export class HomeComponent {
+  constructor(public authService: AuthService) {}
+}

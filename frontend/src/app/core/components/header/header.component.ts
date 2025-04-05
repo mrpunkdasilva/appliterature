@@ -11,7 +11,7 @@ import { AuthService } from '../../services/auth.service';
     <header class="header">
       <div class="header-content">
         <div class="logo">
-          <span class="logo-text">Delta Literature & Arts</span>
+          <span class="logo-text" routerLink="/">Delta Literature & Arts</span>
         </div>
 
         <nav class="main-nav">
@@ -24,7 +24,7 @@ import { AuthService } from '../../services/auth.service';
 
         <div class="user-actions">
           <ng-container *ngIf="authService.currentUser$ | async as user; else loginButtons">
-            <button class="btn-upload" routerLink="/upload">Upload</button>
+            <a class="btn btn-upload" routerLink="/artist/upload">Upload</a>
             <div class="user-menu">
               <img [src]="user.avatar || 'assets/default-avatar.png'" alt="Avatar" class="user-avatar">
               <div class="dropdown-menu">
@@ -36,8 +36,8 @@ import { AuthService } from '../../services/auth.service';
           </ng-container>
 
           <ng-template #loginButtons>
-            <button class="btn-upload" routerLink="/auth/login">Upload</button>
-            <button class="btn-login" routerLink="/auth/login">Login</button>
+            <a class="btn btn-upload" routerLink="/auth/login">Upload</a>
+            <a class="btn btn-login" routerLink="/auth/login">Login</a>
           </ng-template>
         </div>
       </div>
@@ -62,6 +62,7 @@ import { AuthService } from '../../services/auth.service';
       display: flex;
       align-items: center;
       gap: 1rem;
+      cursor: pointer;
     }
 
     .logo-text {
@@ -90,14 +91,16 @@ import { AuthService } from '../../services/auth.service';
     .user-actions {
       display: flex;
       gap: 1rem;
+      align-items: center;
 
-      button {
+      .btn {
         padding: 0.5rem 1rem;
         border-radius: 4px;
-        border: none;
         cursor: pointer;
         transition: all 0.2s;
         font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
       }
 
       .btn-upload {
@@ -118,6 +121,58 @@ import { AuthService } from '../../services/auth.service';
 
         &:hover {
           background: var(--surface-hover);
+        }
+      }
+    }
+
+    .user-menu {
+      position: relative;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: var(--surface-color);
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 0.5rem;
+        min-width: 150px;
+        display: none;
+        flex-direction: column;
+        gap: 0.5rem;
+        z-index: 1000;
+
+        a, button {
+          width: 100%;
+          text-align: left;
+          padding: 0.5rem;
+          color: var(--text-color);
+          text-decoration: none;
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-weight: normal;
+
+          &:hover {
+            background: var(--surface-hover);
+            color: var(--primary-color);
+          }
+        }
+      }
+
+      &:hover {
+        .dropdown-menu {
+          display: flex;
         }
       }
     }

@@ -1,15 +1,18 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
 
 export interface User {
   id: string;
+  username: string;
   email: string;
-  name: string;
   role: string;
+  avatar?: string;
 }
 
-export interface LoginResponse {
+interface AuthResponse {
   user: User;
   token: string;
 }
@@ -19,41 +22,72 @@ export interface LoginResponse {
 })
 export class AuthService {
   private readonly API_URL = '/api/auth';
-  private readonly TOKEN_KEY = 'auth_token';
-  private readonly USER_KEY = 'user';
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  public currentUser$ = this.currentUserSubject.asObservable();
+  private isBrowser: boolean;
 
-  private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
-  currentUser$ = this.currentUserSubject.asObservable();
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+    this.loadStoredUser();
+  }
 
-  constructor(private http: HttpClient) {}
+  private loadStoredUser(): void {
+    if (this.isBrowser) {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        this.currentUserSubject.next(JSON.parse(storedUser));
+      }
+    }
+  }
 
-  login(email: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.API_URL}/login`, { email, password })
-      .pipe(
-        tap(response => {
-          localStorage.setItem(this.TOKEN_KEY, response.token);
-          localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
-          this.currentUserSubject.next(response.user);
-        })
-      );
+  register(username: string, email: string, password: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.API_URL}/register`, {
+      username,
+      email,
+      password
+    }).pipe(
+      tap(response => this.handleAuthSuccess(response))
+    );
+  }
+
+  login(email: string, password: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.API_URL}/login`, {
+      email,
+      password
+    }).pipe(
+      tap(response => this.handleAuthSuccess(response))
+    );
   }
 
   logout(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.USER_KEY);
+    if (this.isBrowser) {
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+    }
     this.currentUserSubject.next(null);
+    this.router.navigate(['/auth/login']);
+  }
+
+  private handleAuthSuccess(response: AuthResponse): void {
+    if (this.isBrowser) {
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
+    }
+    this.currentUserSubject.next(response.user);
   }
 
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    return !!this.currentUserSubject.value;
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
-  }
-
-  private getUserFromStorage(): User | null {
-    const user = localStorage.getItem(this.USER_KEY);
-    return user ? JSON.parse(user) : null;
+    if (this.isBrowser) {
+      return localStorage.getItem('token');
+    }
+    return null;
   }
 }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -24,9 +25,6 @@ import { AuthService } from '../../../../core/services/auth.service';
             <div class="error-message" *ngIf="loginForm.get('email')?.errors?.['required'] && loginForm.get('email')?.touched">
               Email is required
             </div>
-            <div class="error-message" *ngIf="loginForm.get('email')?.errors?.['email'] && loginForm.get('email')?.touched">
-              Invalid email format
-            </div>
           </div>
 
           <div class="form-group">
@@ -46,13 +44,12 @@ import { AuthService } from '../../../../core/services/auth.service';
             <button type="submit" class="btn-login" [disabled]="loginForm.invalid || isLoading">
               {{ isLoading ? 'Logging in...' : 'Login' }}
             </button>
-            <a class="forgot-password" routerLink="/auth/reset-password">Forgot password?</a>
           </div>
         </form>
 
         <div class="register-prompt">
           <p>Don't have an account?</p>
-          <a routerLink="/auth/register" class="btn-register">Create account</a>
+          <a routerLink="/auth/register" class="btn-register">Create Account</a>
         </div>
       </div>
     </div>
@@ -124,9 +121,6 @@ import { AuthService } from '../../../../core/services/auth.service';
     }
 
     .form-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
       margin-top: 2rem;
     }
 
@@ -153,18 +147,6 @@ import { AuthService } from '../../../../core/services/auth.service';
       &:disabled {
         opacity: 0.7;
         cursor: not-allowed;
-      }
-    }
-
-    .forgot-password {
-      text-align: center;
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-size: 0.875rem;
-      transition: all 0.2s;
-
-      &:hover {
-        color: var(--primary-color);
       }
     }
 
@@ -207,7 +189,8 @@ export class LoginComponent {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -222,11 +205,10 @@ export class LoginComponent {
 
       this.authService.login(email, password).subscribe({
         next: () => {
-          // Handle successful login
           this.isLoading = false;
+          this.router.navigate(['/']);
         },
         error: (error) => {
-          // Handle login error
           console.error('Login failed:', error);
           this.isLoading = false;
         }
