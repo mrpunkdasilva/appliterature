@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
@@ -21,7 +21,7 @@ import { AuthService } from '../../../../core/services/auth.service';
               formControlName="username"
               placeholder="Choose a username"
             >
-            <div class="error-message" *ngIf="registerForm.get('username')?.errors?.['required'] && registerForm.get('username')?.touched">
+            <div class="error-message" *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.errors?.['required']">
               Username is required
             </div>
           </div>
@@ -34,11 +34,9 @@ import { AuthService } from '../../../../core/services/auth.service';
               formControlName="email"
               placeholder="your@email.com"
             >
-            <div class="error-message" *ngIf="registerForm.get('email')?.errors?.['required'] && registerForm.get('email')?.touched">
-              Email is required
-            </div>
-            <div class="error-message" *ngIf="registerForm.get('email')?.errors?.['email'] && registerForm.get('email')?.touched">
-              Invalid email format
+            <div class="error-message" *ngIf="registerForm.get('email')?.touched">
+              <span *ngIf="registerForm.get('email')?.errors?.['required']">Email is required</span>
+              <span *ngIf="registerForm.get('email')?.errors?.['email']">Invalid email format</span>
             </div>
           </div>
 
@@ -50,11 +48,9 @@ import { AuthService } from '../../../../core/services/auth.service';
               formControlName="password"
               placeholder="••••••••"
             >
-            <div class="error-message" *ngIf="registerForm.get('password')?.errors?.['required'] && registerForm.get('password')?.touched">
-              Password is required
-            </div>
-            <div class="error-message" *ngIf="registerForm.get('password')?.errors?.['minlength'] && registerForm.get('password')?.touched">
-              Password must be at least 8 characters
+            <div class="error-message" *ngIf="registerForm.get('password')?.touched">
+              <span *ngIf="registerForm.get('password')?.errors?.['required']">Password is required</span>
+              <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Password must be at least 8 characters</span>
             </div>
           </div>
 
@@ -66,13 +62,18 @@ import { AuthService } from '../../../../core/services/auth.service';
               formControlName="confirmPassword"
               placeholder="••••••••"
             >
-            <div class="error-message" *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched">
-              Passwords do not match
+            <div class="error-message" *ngIf="registerForm.get('confirmPassword')?.touched">
+              <span *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Password confirmation is required</span>
+              <span *ngIf="registerForm.errors?.['passwordMismatch']">Passwords do not match</span>
             </div>
           </div>
 
           <div class="form-actions">
-            <button type="submit" class="btn-register" [disabled]="registerForm.invalid || isLoading">
+            <button
+              type="submit"
+              class="btn-register"
+              [disabled]="registerForm.invalid || isLoading"
+            >
               {{ isLoading ? 'Creating account...' : 'Create Account' }}
             </button>
           </div>
@@ -90,93 +91,74 @@ import { AuthService } from '../../../../core/services/auth.service';
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: calc(100vh - 200px);
-      padding: 2rem;
+      min-height: 100vh;
+      padding: 1rem;
+      background: var(--surface-ground);
     }
 
     .register-card {
       background: var(--surface-card);
-      border-radius: var(--border-radius-lg);
       padding: 2rem;
+      border-radius: 8px;
       width: 100%;
       max-width: 400px;
-      box-shadow: var(--neon-shadow);
-      border: 1px solid rgba(0, 255, 159, 0.1);
+      box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+    }
 
-      h1 {
-        text-align: center;
-        margin-bottom: 2rem;
-        color: var(--primary-color);
-        font-family: 'Orbitron', sans-serif;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-      }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: var(--text-color);
     }
 
     .form-group {
       margin-bottom: 1.5rem;
+    }
 
-      label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: var(--text-color);
-        font-family: 'Rajdhani', sans-serif;
-        font-weight: 600;
-      }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-color);
+    }
 
-      input {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        background: var(--surface-alt);
-        border: 1px solid var(--primary-color);
-        border-radius: var(--border-radius-sm);
-        color: var(--text-color);
-        font-family: 'Rajdhani', sans-serif;
-        transition: all 0.2s;
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--surface-border);
+      border-radius: 4px;
+      background: var(--surface-ground);
+      color: var(--text-color);
+      transition: border-color 0.2s;
 
-        &:focus {
-          outline: none;
-          box-shadow: var(--neon-shadow);
-        }
-
-        &::placeholder {
-          color: var(--text-disabled);
-        }
+      &:focus {
+        outline: none;
+        border-color: var(--primary-color);
       }
     }
 
     .error-message {
-      color: var(--error-color);
+      color: var(--red-500);
       font-size: 0.875rem;
-      margin-top: 0.5rem;
-    }
-
-    .form-actions {
-      margin-top: 2rem;
+      margin-top: 0.25rem;
     }
 
     .btn-register {
       width: 100%;
       padding: 0.75rem;
-      background: var(--primary-color);
-      color: var(--surface-color);
       border: none;
-      border-radius: var(--border-radius-sm);
-      font-family: 'Orbitron', sans-serif;
+      border-radius: 4px;
+      background: var(--primary-color);
+      color: white;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
       cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: var(--neon-shadow);
+      transition: background-color 0.2s;
 
       &:hover:not(:disabled) {
-        background: var(--primary-dark);
-        box-shadow: var(--neon-glow);
+        background: var(--primary-600);
       }
 
       &:disabled {
-        opacity: 0.7;
+        opacity: 0.6;
         cursor: not-allowed;
       }
     }
@@ -184,31 +166,19 @@ import { AuthService } from '../../../../core/services/auth.service';
     .login-prompt {
       margin-top: 2rem;
       text-align: center;
-      border-top: 1px solid rgba(0, 255, 159, 0.1);
-      padding-top: 2rem;
 
       p {
-        color: var(--text-secondary);
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-color-secondary);
       }
 
       .btn-login {
-        display: inline-block;
-        padding: 0.75rem 2rem;
-        background: transparent;
-        border: 1px solid var(--primary-color);
         color: var(--primary-color);
-        border-radius: var(--border-radius-sm);
         text-decoration: none;
-        font-family: 'Orbitron', sans-serif;
         font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        transition: all 0.2s;
 
         &:hover {
-          background: var(--surface-hover);
-          box-shadow: var(--neon-shadow);
+          text-decoration: underline;
         }
       }
     }
@@ -220,7 +190,8 @@ export class RegisterComponent {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {
     this.registerForm = this.fb.group({
       username: ['', [Validators.required]],
@@ -237,21 +208,23 @@ export class RegisterComponent {
   }
 
   onSubmit() {
-    if (this.registerForm.valid) {
-      this.isLoading = true;
-      const { username, email, password } = this.registerForm.value;
-      
-      this.authService.register(username, email, password).subscribe({
-        next: () => {
-          // Handle successful registration
-          this.isLoading = false;
-        },
-        error: (error) => {
-          // Handle registration error
-          console.error('Registration failed:', error);
-          this.isLoading = false;
-        }
-      });
+    if (this.registerForm.invalid) {
+      return;
     }
+
+    this.isLoading = true;
+    const { username, email, password } = this.registerForm.value;
+
+    this.authService.register(username, email, password).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.router.navigate(['/']); // Navega para a página inicial após o registro
+      },
+      error: (error) => {
+        console.error('Registration failed:', error);
+        this.isLoading = false;
+        // Aqui você pode adicionar uma lógica para mostrar mensagens de erro
+      }
+    });
   }
 }
