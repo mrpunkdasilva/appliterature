@@ -1,0 +1,163 @@
+/* Estilos Globais e Mobile First */
+:root {
+  --primary-color: #7a5c3d; /* Marrom escuro */
+  --secondary-color: #c2a277; /* Bege */
+  --accent-color: #e8c766; /* Dourado */
+  --text-color: #4a3f35; /* Marrom acinzentado */
+  --background-color: #fdf6e3; /* Creme */
+}
+
+.page {
+  font-family: 'Cinzel', serif;
+  color: var(--text-color);
+  background-color: var(--background-color);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--secondary-color);
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-decoration: none;
+  color: var(--primary-color);
+}
+
+.nav {
+  display: none; /* Oculto em mobile */
+}
+
+.hero {
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-color);
+  margin-bottom: 2rem;
+}
+
+.button-primary {
+  background-color: var(--primary-color);
+  color: var(--background-color);
+  padding: 0.8rem 1.5rem;
+  border-radius: 2px;
+  text-decoration: none;
+  display: inline-block;
+  border: 1px solid var(--accent-color);
+  transition: background-color 0.3s;
+}
+
+.button-primary:hover {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+}
+
+.hero-image img {
+  max-width: 100%;
+  height: auto;
+  margin-top: 2rem;
+  border: 5px solid var(--secondary-color);
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+}
+
+.features-section, .categories-section {
+    padding: 3rem 1rem;
+}
+
+.features-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.feature-item {
+    border: 1px solid var(--secondary-color);
+    padding: 1.5rem;
+}
+
+.feature-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.categories-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.category-tag {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.footer {
+  text-align: center;
+  padding: 1.5rem;
+  margin-top: auto;
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+}
+
+/* Estilos para Telas Maiores (Desktop) */
+@media (min-width: 768px) {
+  .nav {
+    display: block;
+  }
+
+  .nav-link {
+    margin-left: 1.5rem;
+    text-decoration: none;
+    color: var(--primary-color);
+    font-weight: bold;
+  }
+
+  .hero {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    padding: 4rem 2rem;
+  }
+
+  .hero-content {
+    max-width: 50%;
+    margin-right: 2rem;
+  }
+
+  .hero-image {
+    max-width: 50%;
+  }
+
+  .features-grid {
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .feature-item {
+    max-width: 30%;
+  }
+}

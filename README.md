@@ -16,7 +16,7 @@ Delta Literature & Arts é um espaço digital onde artistas e entusiastas podem 
 ## 🚀 Funcionalidades Principais
 - Criação e publicação de conteúdo multimídia
 - Galeria personalizada por artista
-- Sistema de categorização por tipo de arte
+- Sistema de categorização porvolta tipo de arte
 - Curadoria colaborativa de conteúdo
 - Interação social (comentários, likes, compartilhamentos)
 - Collections e playlists personalizadas
